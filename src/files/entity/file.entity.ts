@@ -1,9 +1,9 @@
-import { CosmosPartitionKey, CosmosDateTime } from '@nestjs/azure-database';
+import { CosmosPartitionKey, CosmosDateTime, CosmosUniqueKey } from '@dinohorvat/azure-database'
 
 @CosmosPartitionKey('type')
 export class File {
   userName: string;
-  filename: string;
+  @CosmosUniqueKey() filename: string;
   text: string;
   @CosmosDateTime() createdAt: Date;
 }

@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { FilesController } from './files/files.controller';
-import { TagsController } from './tags/tags.controller';
-import { FilesService } from './files/files.service';
-import { TagsService } from './tags/tags.service';
 import { TagsModule } from './tags/tags.module';
 import { FilesModule } from './files/files.module';
+import { AzureCosmosDbModule } from '@dinohorvat/azure-database';
+if (process.env.NODE_ENV !== 'production') require('dotenv').config({ debug: true });
 
 @Module({
-  imports: [TagsModule, FilesModule],
-  controllers: [AppController, FilesController, TagsController],
-  providers: [AppService, FilesService, TagsService],
+  imports: [TagsModule, FilesModule,
+    AzureCosmosDbModule.forRoot({
+      dbName: process.env.AZURE_COSMOS_DB_NAME,
+      endpoint: process.env.AZURE_COSMOS_DB_ENDPOINT,
+      key: process.env.AZURE_COSMOS_DB_KEY,
+    }),
+  ],
+  controllers: [],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }
