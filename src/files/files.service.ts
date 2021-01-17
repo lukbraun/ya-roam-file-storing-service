@@ -1,14 +1,11 @@
-import { InjectModel } from '@dinohorvat/azure-database';
-import { Injectable } from '@nestjs/common';
-import { File } from './entity/file.entity';
+import { Inject, Injectable } from '@nestjs/common';
+import { DatabaseAdapterService } from 'src/database-adapter/database-adapter.service';
 import { File as FileDto } from './dto/file.dto';
-import { Container } from '@azure/cosmos';
 
 @Injectable()
 export class FilesService {
     constructor(
-        @InjectModel(File)
-        private readonly fileContainer: Container,
+        @Inject() db: DatabaseAdapterService
     ) { }
 
     // TODO: Implement
