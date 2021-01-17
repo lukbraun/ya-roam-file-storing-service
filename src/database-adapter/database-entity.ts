@@ -1,6 +1,5 @@
 
-
-abstract class Entity {
+export abstract class Entity {
     constructor(private readonly id: string) { }
 
     public getId() {

@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AzureCosmosDbModule } from '@dinohorvat/azure-database';
 import { FilesService } from './files.service';
 import { FilesController } from './files.controller';
-import { File } from './entity/file.entity';
+import { DatabaseAdapterModule } from 'src/database-adapter/database-adapter.module';
 
 
 @Module({
-  imports: [
-    AzureCosmosDbModule.forFeature([{ dto: File }])
-  ],
+  imports: [DatabaseAdapterModule],
   providers: [FilesService],
   controllers: [FilesController],
 })
