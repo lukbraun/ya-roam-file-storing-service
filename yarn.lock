@@ -830,6 +830,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/gremlin@^3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@types/gremlin/-/gremlin-3.4.6.tgz#bdc83ffe9738c49c3eac56006ae62b1f06bdce8c"
+  integrity sha512-ncw1vWIpoSdG8I6yPWvCE+q2yVzQRdEC0Gy1dHE96T4VV1W+k3oif93Hzxu1hMRz0GUOlyCVE2zvqOwS02Zogg==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"

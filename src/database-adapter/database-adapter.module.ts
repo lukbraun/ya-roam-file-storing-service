@@ -4,4 +4,5 @@ import { DatabaseAdapterService } from './database-adapter.service';
 @Module({
   providers: [DatabaseAdapterService]
 })
-export class DatabaseAdapterModule {}
+export class DatabaseAdapterModule {
+}
