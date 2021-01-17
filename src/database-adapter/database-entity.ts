@@ -1,16 +1,7 @@
 
 
-abstract class Entity<E> {
-    protected static fieldName: string;
-    constructor(protected model: E, private readonly id: string) { }
-
-    public set(model: E) {
-        this.model = model;
-    }
-
-    public get(): E {
-        return this.model;
-    }
+abstract class Entity {
+    constructor(private readonly id: string) { }
 
     public getId() {
         return this.id;
@@ -18,7 +9,7 @@ abstract class Entity<E> {
 
     abstract addV(): DatabaseStatement;
 
-    public addEdgeTo<T, TargetEntity extends Entity<T>>(target: TargetEntity, relationShip: string): DatabaseStatement {
+    public addEdgeTo(target: Entity, relationShip: string): DatabaseStatement {
         return {
             stmt: "g.V(source).addE(relationship).to(g.V(target))",
             params: {

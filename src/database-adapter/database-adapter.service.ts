@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Config } from './database.config';
 import * as Gremlin from 'gremlin';
 
@@ -6,7 +6,8 @@ import * as Gremlin from 'gremlin';
 export class DatabaseAdapterService {
     private client: Gremlin.driver.Client;
     private readonly logger = new Logger(DatabaseAdapterService.name);
-    constructor(config: Config) {
+    constructor(@Inject('CONFIG') config: Config) {
+        this.logger.log(JSON.stringify(config));
         const authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(`/dbs/${config.database}/colls/${config.collection}`, config.key);
         this.client = new Gremlin.driver.Client(
             config.endpoint,
