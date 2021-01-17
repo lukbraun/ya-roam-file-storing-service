@@ -34,13 +34,11 @@ export class DatabaseAdapterService {
     }
 
     public addVertex(e: Entity): Promise<any> {
-        this.logger.log(`Add Vertex: ${e.getId()}`)
         const stmt = e.addV();
         return this.submit(stmt);
     }
 
     public addRelation(source: Entity, target: Entity, relationship: string): Promise<any> {
-        this.logger.log(`Add Edge: ${source.getId()} -[${relationship}]-> ${target.getId()}`)
         const stmt = source.addEdgeTo(target, relationship);
         return this.submit(stmt);
     }
