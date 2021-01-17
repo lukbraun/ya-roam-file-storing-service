@@ -50,16 +50,15 @@ export class DatabaseAdapterService {
         return this.submit(stmt);
     }
 
-    public getAll(label: string) {
+    public async getAll(label: string) {
         const stmt: DatabaseStatement = {
             params: [],
             stmt: `g.V().hasLabel('${label}')`
         };
-        return this.runStatement(stmt).then(res => {
-            return  res._items.map(i => ({
+        const res = await this.runStatement(stmt);
+        return res._items.map((i: { properties: any; }) => ({
                 ...i.properties
-            }))
-        });
+            }));
 
     }
 }
