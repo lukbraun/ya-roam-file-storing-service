@@ -21,21 +21,24 @@ export class DatabaseAdapterService {
 
     private async submit(stmt: DatabaseStatement): Promise<any> {
         return this.client.submit(stmt.stmt, stmt.params).then(res => {
-            this.logger.log(`Result: ${res}`);
+            this.logger.log(`Result: ${JSON.stringify(res)}`);
         });
     }
 
     public addVertex<T>(e: Entity<T>): Promise<any> {
+        this.logger.log(`Add Vertex: ${e.getId()}`)
         const stmt = e.addV();
         return this.submit(stmt);
     }
 
     public addRelation<S, T>(source: Entity<S>, target: Entity<T>, relationship: string): Promise<any> {
+        this.logger.log(`Add Edge: ${source.getId()} -[${relationship}]-> ${target.getId()}`)
         const stmt = source.addEdgeTo(target, relationship);
         return this.submit(stmt);
     }
 
     public runStatement(stmt: DatabaseStatement): Promise<any> {
+        this.logger.log(`Submit: ${stmt.stmt}`);
         return this.submit(stmt);
     }
 }
