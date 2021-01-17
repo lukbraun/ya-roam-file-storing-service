@@ -29,6 +29,8 @@
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
+    "gremlin": "^3.4.9",
+    "gremlin-template-string": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3"
