@@ -23,7 +23,6 @@ export class TagsController {
     @Get('/tagname')
     async getByName(@Query('name') tagname: string): Promise<Tag> {
         return this.tagService.getByName(tagname).then(this.tagService.tagToDto).catch(res => {
-            this.logger.log(JSON.stringify(res));
             return res;
         });
     }

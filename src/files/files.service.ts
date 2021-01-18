@@ -26,7 +26,6 @@ export class FilesService {
 
     async create(file: FileDto) {
         const entity = new File(file.fileName, file.userName, file.text);
-        this.logger.log(JSON.stringify(entity));
         return this.db.addVertex(entity)
             .then(element => this.getFileFromResult(element._items))
             .catch(reason => {
