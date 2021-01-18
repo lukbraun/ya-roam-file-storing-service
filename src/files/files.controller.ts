@@ -25,7 +25,6 @@ export class FilesController {
     @Get('/filename')
     async getByFilename(@Query('name') filename: string): Promise<any> {
         return this.service.getByFilename(filename).then(res => {
-            this.logger.log(JSON.stringify(res));
             return this.service.fileToFileDto(res);
         });
     }

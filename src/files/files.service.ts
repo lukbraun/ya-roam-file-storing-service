@@ -15,13 +15,12 @@ export class FilesService {
             fileName: entity.filename,
             userName: entity.username,
             text: entity.text,
-            title: [],
-            tags: []
+            title: [], // TODO: Find all Tags
+            tags: [] // TODO: Find all Titles
         }
     }
 
     private getFileFromResult(_properties: any): File {
-        console.log(JSON.stringify(_properties));
         return new File(_properties.filename[0].value, _properties.username[0].value, _properties.text[0].value);
     }
 
@@ -50,8 +49,7 @@ export class FilesService {
             }
         }
         return this.db.runStatement(stmt).then(res => {
-            this.logger.log(JSON.stringify(res._items[0]))
-            return this.getFileFromResult(res._items[0]);
+            return this.getFileFromResult(res._items[0].properties);
         })
     }
 }
