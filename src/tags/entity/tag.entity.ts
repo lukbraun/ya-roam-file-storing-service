@@ -7,7 +7,7 @@ export class Tag extends Entity {
 
     addV(): DatabaseStatement {
         return {
-            stmt: "g.addV(label).property('yaroam', name).property('name', name)",
+            stmt: "g.V().hasLabel(label).has('name', name).fold().coalesce(unfold(), g.addV(label).property('yaroam', name).property('name', name))",
             params: {
                 label: 'Tag',
                 name: this.name

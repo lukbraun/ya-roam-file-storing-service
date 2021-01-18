@@ -6,7 +6,7 @@ export class File extends Entity {
   }
   addV(): DatabaseStatement {
     return {
-      stmt: "g.addV(label).property('yaroam', filename).property('filename', filename).property('username', username).property('text', text)",
+      stmt: "g.V().hasLabel(label).has('filename', filename).fold().coalesce(unfold(), g.addV(label).property('yaroam', filename).property('filename', filename).property('username', username).property('text', text))",
       params: {
         label: "File",
         username: this.username,
