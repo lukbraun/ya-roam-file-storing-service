@@ -43,4 +43,15 @@ export class TitleService {
         return this.db.runStatement(stmt).then(res => this.getTitleFromResult(res._items[0].properties))
     }
 
+    async remove(name: string): Promise<boolean> {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('name', name).drop()",
+            params: {
+                label: "Title",
+                name: name
+            }
+        }
+        return this.db.runStatement(stmt).then(_ => true);
+    }
+
 }

@@ -51,4 +51,15 @@ export class FilesService {
             return this.getFileFromResult(res._items[0].properties);
         })
     }
+
+    async remove(filename: string): Promise<boolean> {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('name', name).drop()",
+            params: {
+                label: "File",
+                name: filename
+            }
+        }
+        return this.db.runStatement(stmt).then(_ => true);
+    }
 }

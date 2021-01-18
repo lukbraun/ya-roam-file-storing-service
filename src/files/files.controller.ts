@@ -1,4 +1,4 @@
-import { Body, HttpCode, HttpStatus, Logger, Query } from '@nestjs/common';
+import { BadRequestException, Body, Delete, HttpCode, HttpStatus, Logger, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common';
 import { File } from './dto/file.dto';
@@ -9,7 +9,7 @@ export class FilesController {
 
     private logger = new Logger(FilesController.name);
 
-    constructor(private service: FilesService) {}
+    constructor(private service: FilesService) { }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
@@ -23,14 +23,17 @@ export class FilesController {
     }
 
     @Get('/filename')
-    async getByFilename(@Query('name') filename: string): Promise<any> {
+    async getByFilename(@Query('name') filename: string): Promise<File> {
         return this.service.getByFilename(filename).then(res => {
             return this.service.fileToFileDto(res);
         });
     }
 
-    // @Get('/tag')
-    // async getFilesWithTag(@Query('tags') tags): Promise<File[]> {
-    //     return [];
-    // }
+    @Delete('/filename')
+    async deleteFile(@Query('name') filename: string) {
+        if (!filename) {
+            throw new BadRequestException('name must be set')
+        }
+        await this.service.remove(filename);
+    }
 }
