@@ -1,14 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Subject, Subscription } from 'rxjs';
 import { DatabaseAdapterService } from 'src/database-adapter/database-adapter.service';
+import { ServicebusService } from 'src/servicebus/servicebus.service';
 import { File as FileDto } from './dto/file.dto';
 import { File } from './entity/file.entity';
 
 @Injectable()
 export class FilesService {
     private logger = new Logger(FilesService.name);
+    private sendTo = new Subject<FileDto>();
+    private subSender: Subscription;
+
     constructor(
-        private db: DatabaseAdapterService
-    ) { }
+        private db: DatabaseAdapterService, private sb: ServicebusService
+    ) {
+        this.subSender = this.sb.subscribeSender(this.sendTo);
+    }
 
     public fileToFileDto(entity: File): FileDto {
         return {
@@ -25,6 +32,7 @@ export class FilesService {
     }
 
     async create(file: FileDto) {
+        this.sendTo.next(file);
         const entity = new File(file.fileName, file.userName, file.text);
         return this.db.addVertex(entity)
             .then(element => this.getFileFromResult(element._items[0].properties))
