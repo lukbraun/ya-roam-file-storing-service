@@ -52,8 +52,8 @@ export class ServicebusService {
         });
     }
 
-    public subscribeToReveiver(subj: Subject<UpdateFile>): Subscription {
-        return this.fileReceiver.subscribe(subj);
+    public subscribeToReveiver(handler: (_: UpdateFile) => void): Subscription {
+        return this.fileReceiver.subscribe(handler);
     }
 
     public subscribeSender(subject: Subject<File>): Subscription {

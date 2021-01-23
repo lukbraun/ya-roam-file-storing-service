@@ -44,7 +44,7 @@ export class DatabaseAdapterService {
     }
 
     public runStatement(stmt: DatabaseStatement): Promise<any> {
-        this.logger.log(`Submit: ${stmt.stmt}`);
+        this.logger.debug(`Submit: ${stmt.stmt}`);
         return this.submit(stmt);
     }
 

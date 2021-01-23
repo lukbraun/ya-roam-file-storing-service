@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Delete, HttpCode, HttpStatus, Logger, Query } from '@nestjs/common';
+import { BadRequestException, Body, Delete, HttpCode, HttpStatus, Logger, NotFoundException, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common';
 import { CreateFile } from './dto/createFile.dto';
 import { File } from './dto/file.dto';
+import { EmptyFile } from './entity/emptyFile.entity';
 import { FilesService } from './files.service';
 
 @Controller('files')
@@ -25,7 +26,14 @@ export class FilesController {
 
     @Get('/filename')
     async getByFilename(@Query('name') filename: string): Promise<File> {
-        return this.service.getByFilename(filename).then(res => {
+        return this.service.getByFilename(filename)
+        .then(file => {
+            if(file instanceof EmptyFile) {
+                throw new NotFoundException(`File "${filename}" not found`);
+            }
+            return file;
+        })
+        .then(res => {
             return this.service.fileToFileDto(res);
         });
     }
