@@ -16,12 +16,14 @@ export class FilesService {
     private sendTo = new Subject<FileDto>();
     private subSender: Subscription;
     private subReceiveParsed: Subscription;
+    private subReceiveCreateFile: Subscription;
 
     constructor(
         private db: DatabaseAdapterService, private sb: ServicebusService
     ) {
         this.subSender = this.sb.subscribeSender(this.sendTo);
         this.subReceiveParsed = this.sb.subscribeToReveiver(FilesService.handleUpdate(this));
+        this.subReceiveCreateFile = this.sb.subscribeToCreateFileReceiver(FilesService.handleInsertFile(this));
     }
 
     public fileToFileDto(entity: File): FileDto {
@@ -31,6 +33,12 @@ export class FilesService {
             text: entity.text,
             title: [], // TODO: Find all Tags
             tags: [] // TODO: Find all Titles
+        }
+    }
+
+    private static handleInsertFile(fs: FilesService) {
+        return async (info: CreateFile) => {
+            fs.create(info);
         }
     }
 
@@ -53,7 +61,7 @@ export class FilesService {
                 .forEach(async ref => {
                     const aref = await ref;
                     if (aref instanceof EmptyFile) {
-                        const f = new File(aref.filename, "unkownn", "");
+                        const f = new File(aref.filename, "unkown", "");
                         fs.db.addVertex(f).then(_ => {
                             const stmtE = file.addEdgeTo(f, "references");
                             fs.db.runStatement(stmtE).catch(fs.logger.error)
