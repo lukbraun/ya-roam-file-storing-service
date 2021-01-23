@@ -54,4 +54,14 @@ export class TitleService {
         return this.db.runStatement(stmt).then(_ => true);
     }
 
+    public cleanUp() {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).not(inE(relName)).drop()",
+            params: {
+                label: "Title",
+                relName: "hasTitle"
+            }
+        }
+        return this.db.runStatement(stmt).then(_ => true);
+    }
 }

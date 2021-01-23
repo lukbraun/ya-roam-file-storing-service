@@ -8,7 +8,7 @@ import { TitleModule } from 'src/title/title.module';
 
 
 @Module({
-  imports: [DatabaseAdapterModule, ServicebusModule],
+  imports: [DatabaseAdapterModule, ServicebusModule, TagsModule, TitleModule],
   providers: [FilesService],
   controllers: [FilesController],
 })

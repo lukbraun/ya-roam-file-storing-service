@@ -5,7 +5,6 @@ import { Tag as TagDto } from './dto/tag.dto';
 
 @Injectable()
 export class TagsService {
-
     private logger = new Logger(TagsService.name);
 
     constructor(private db: DatabaseAdapterService) { }
@@ -50,4 +49,16 @@ export class TagsService {
         }
         return this.db.runStatement(stmt).then(_ => true);
     }
+
+    public cleanUp() {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).not(inE(relName)).drop()",
+            params: {
+                label: "Tag",
+                relName: "hasTag"
+            }
+        }
+        return this.db.runStatement(stmt).then(_ => true);
+    }
+
 }

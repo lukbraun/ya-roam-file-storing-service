@@ -42,9 +42,31 @@ export class FilesService {
         }
     }
 
+    private static async removeTagsAndTitlesOf(filename: string, fs: FilesService) {
+        const removeTags: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('filename', filename).not(inE(relName)).drop()",
+            params: {
+                label: "Tag",
+                relName: "hasTag",
+                filename: filename
+            }
+        }
+        await fs.db.runStatement(removeTags).then(_ => true);
+        const removeTitles: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('filename', filename).not(inE(relName)).drop()",
+            params: {
+                label: "Title",
+                relName: "hasTitle",
+                filename: filename
+            }
+        }
+        await fs.db.runStatement(removeTitles).then(_ => true);
+    }
+
     private static handleUpdate(fs: FilesService) {
         return async (info: UpdateFile) => {
             const file = await fs.getByFilename(info.fileName);
+            FilesService.removeTagsAndTitlesOf(info.fileName, fs);
             info.tags.map(x => new Tag(x)).forEach(x => {
                 fs.db.addVertex(x).then(_ => {
                     const stmtE = file.addEdgeTo(x, "hasTag");
@@ -72,28 +94,6 @@ export class FilesService {
                     }
                 });
         }
-    }
-    private async handleParsedInfo(info: UpdateFile) {
-        const file = await this.getByFilename(info.fileName);
-        info.tags.map(x => new Tag(x)).forEach(x => {
-            x.addV();
-            file.addEdgeTo(x, "hasTag");
-        });
-        info.tags.map(x => new Title(x)).forEach(x => {
-            x.addV();
-            file.addEdgeTo(x, "hasTitle");
-        });
-        info.references.map(x => this.getByFilename(x))
-            .forEach(async ref => {
-                const aref = await ref;
-                if (aref instanceof EmptyFile) {
-                    const f = new File(aref.filename, "unkonwn", "");
-                    f.addV();
-                    file.addEdgeTo(f, "references");
-                } else {
-                    file.addEdgeTo(aref, "references");
-                }
-            });
     }
 
     private getFileFromResult(_properties: any): File {
