@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Delete, HttpCode, HttpStatus, Logger, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common';
+import { CreateFile } from './dto/createFile.dto';
 import { File } from './dto/file.dto';
 import { FilesService } from './files.service';
 
@@ -13,7 +14,7 @@ export class FilesController {
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    async addVertex(@Body() file: File): Promise<File> {
+    async addVertex(@Body() file: CreateFile): Promise<File> {
         return this.service.create(file).then(this.service.fileToFileDto);
     }
 

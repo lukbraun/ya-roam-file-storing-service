@@ -1,7 +1,8 @@
 import { ServiceBusClient } from '@azure/service-bus';
 import { Injectable, Logger } from '@nestjs/common';
 import { Subject, Subscription } from 'rxjs';
-import { File } from 'src/files/dto/file.dto';
+import { UpdateFile } from 'src/files/dto/updateFile.dto';
+import { File } from 'src/files/dto/file.dto'
 const queueReceiver = "insertfile";
 const queueSenderForParse = "parsefile";
 
@@ -13,21 +14,34 @@ export class ServicebusService {
     private readonly sbclient: ServiceBusClient = new ServiceBusClient(ServicebusService.connectionStringSender);
     private readonly fileSenderClient = this.sbclient.createSender(queueSenderForParse);
     private readonly fileReceiverClient = this.sbclient.createReceiver(queueReceiver);
-    private readonly fileReceiver: Subject<File> = new Subject<File>();
+    private readonly fileReceiver: Subject<UpdateFile> = new Subject<UpdateFile>();
+
+    private static getFromMessage(name: string[]): any {
+        return (acc, res) => {
+            if (name.includes(res.type)) {
+                res.value.forEach(x => {
+                    acc.push(x)
+                })
+            }
+            return acc;
+        };
+    }
 
     constructor() {
         this.logger.debug(ServicebusService.connectionStringSender);
         this.logger.debug(ServicebusService.connectionStringReceiver);
         const fileReceiverHandler = async (file: any) => {
-            const f: File = {
-                fileName: file.fileName,
-                userName: file.userName,
-                text: file.text,
-                title: file.title,
-                tags: file.tags
+            const title = file.body.value.reduce(ServicebusService.getFromMessage(["alias", "title"]), []);
+            const tags = file.body.value.reduce(ServicebusService.getFromMessage(["tags"]), []);
+            const references = file.body.value.reduce(ServicebusService.getFromMessage(["reference"]), []);
+            const f: UpdateFile = {
+                fileName: file.body.fileName,
+                title: title,
+                tags: tags,
+                references: references
             }
-            this.logger.debug(`received: ${JSON.stringify(f)}`);
-            this.receiveFromServiceBus(file);
+            this.logger.debug(`Received & created: ${JSON.stringify(f)}`);
+            this.receiveFromServiceBus(f);
         }
         const errorHandler = async (err: any) => {
             return this.logger.error(JSON.stringify(err));
@@ -38,7 +52,7 @@ export class ServicebusService {
         });
     }
 
-    public subscribeToReveiver(subj: Subject<File>): Subscription {
+    public subscribeToReveiver(subj: Subject<UpdateFile>): Subscription {
         return this.fileReceiver.subscribe(subj);
     }
 
@@ -46,12 +60,12 @@ export class ServicebusService {
         return subject.subscribe(x => this.sendToServiceBus(x));
     }
 
-    private async sendToServiceBus(file: File)  {
+    private async sendToServiceBus(file: File) {
         this.logger.debug(`send: ${JSON.stringify(file)}`);
         this.fileSenderClient.sendMessages({ body: file });
     }
 
-    private receiveFromServiceBus(file: File): void {
+    private receiveFromServiceBus(file: UpdateFile): void {
         this.fileReceiver.next(file);
     }
 }

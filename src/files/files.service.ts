@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Subject, Subscription } from 'rxjs';
 import { DatabaseAdapterService } from 'src/database-adapter/database-adapter.service';
 import { ServicebusService } from 'src/servicebus/servicebus.service';
+import { CreateFile } from './dto/createFile.dto';
 import { File as FileDto } from './dto/file.dto';
 import { File } from './entity/file.entity';
 
@@ -31,9 +32,9 @@ export class FilesService {
         return new File(_properties.filename[0].value, _properties.username[0].value, _properties.text[0].value);
     }
 
-    async create(file: FileDto) {
-        this.sendTo.next(file);
+    async create(file: CreateFile) {
         const entity = new File(file.fileName, file.userName, file.text);
+        this.sendTo.next(this.fileToFileDto(entity));
         return this.db.addVertex(entity)
             .then(element => this.getFileFromResult(element._items[0].properties))
             .catch(reason => {
