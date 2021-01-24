@@ -34,5 +34,5 @@ jobs:
       with:
         app-name: 'ya-roam-file-storing-service'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_af6d4630d45e49eda92ec0e1630a4dd8 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_f7864e0b938e4caf969acf97240e97d2 }}
         package: .
