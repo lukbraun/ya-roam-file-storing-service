@@ -22,8 +22,10 @@ jobs:
 
     - name: npm install, build, and test
       run: |
-        npm install
+        npm install --only=development
         npm run build 
+        rm -rf node_modules/ LICENSE  nest-cli.json  node_modules/ README.org  src/  test/  tsconfig.build.json  tsconfig.json
+        npm install --only=production
         
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
