@@ -1,8 +1,6 @@
 import { BadRequestException, Body, Delete, HttpCode, HttpStatus, Logger, NotFoundException, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common';
-import { TagsService } from 'src/tags/tags.service';
-import { TitleService } from 'src/title/title.service';
 import { CreateFile } from './dto/createFile.dto';
 import { File } from './dto/file.dto';
 import { EmptyFile } from './entity/emptyFile.entity';
@@ -13,7 +11,7 @@ export class FilesController {
 
     private logger = new Logger(FilesController.name);
 
-    constructor(private service: FilesService, private tagService: TagsService, private titleService: TitleService) { }
+    constructor(private service: FilesService) { }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
@@ -23,7 +21,7 @@ export class FilesController {
 
     @Get()
     async getAll(): Promise<File[]> {
-        return this.service.getAll().then(element => element.map(this.service.fileToFileDto));
+        return await this.service.getAll();
     }
 
     @Get('/filename')
@@ -51,8 +49,6 @@ export class FilesController {
     @Post("/clean")
     @HttpCode(HttpStatus.OK)
     async cleanDb() {
-        this.logger.log("Remove unconnected title & tag vertices");
-        this.tagService.cleanUp();
-        this.titleService.cleanUp();
+        this.service.cleanUp();
     }
 }
