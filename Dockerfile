@@ -35,7 +35,8 @@ RUN npm install --only=production
 COPY . .
 COPY --from=builder /usr/src/app/dist ./dist
 
-EXPOSE ${PORT}
+# EXPOSE ${PORT}
+EXPOSE 80
 EXPOSE 443
 
 CMD ["node", "dist/main"]
