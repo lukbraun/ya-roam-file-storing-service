@@ -57,6 +57,7 @@ export class FilesService {
         const titles: string[] = await this.getTitlesOf(entity.filename)
         const tags: string[] = await this.getTagsOf(entity.filename)
         const references: string[] = await this.getReferencesOf(entity.filename);
+        const referencedBy: string[] = await this.getReferencedBy(entity.filename);
 
         const res: FileDto = {
             fileName: entity.filename,
@@ -64,7 +65,8 @@ export class FilesService {
             text: entity.text,
             title: titles,
             tags: tags,
-            references: references
+            references: references,
+            referencedBy: referencedBy
         }
         return res;
     }
@@ -72,6 +74,23 @@ export class FilesService {
     public async getReferencesOf(filename: string): Promise<string[]> {
         const stmt: DatabaseStatement = {
             stmt: "g.V().hasLabel(label).has('filename', filename).outE(relname).inV()",
+            params: {
+                label: 'File',
+                filename: filename,
+                relname: 'references'
+            }
+        }
+        return await this.db.runStatement(stmt).then(res => {
+            if (res.length === 0) {
+                return [];
+            }
+            return res._items.map(x => x.properties.filename[0].value as string)
+        })
+    }
+
+    public async getReferencedBy(filename: string): Promise<string[]> {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('filename', filename).inE(relname).inV()",
             params: {
                 label: 'File',
                 filename: filename,

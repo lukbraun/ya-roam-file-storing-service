@@ -7,4 +7,5 @@ export interface File {
   title: string[]; // may contain aliase
   tags: string[]; // may contain multiple tags
   references: string[];
+  referencedBy: string[];
 }
