@@ -22,7 +22,7 @@ jobs:
 
     - name: npm install, build, and test
       run: |
-        npm install --only=development
+        npm install
         npm run build 
         rm -rf node_modules/ LICENSE  nest-cli.json  node_modules/ README.org  src/  test/  tsconfig.build.json  tsconfig.json
         npm install --only=production
