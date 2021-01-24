@@ -6,4 +6,5 @@ export interface File {
   text: string;
   title: string[]; // may contain aliase
   tags: string[]; // may contain multiple tags
+  references: string[];
 }

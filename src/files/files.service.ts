@@ -56,15 +56,34 @@ export class FilesService {
     public async fileToFileDto(entity: File): Promise<FileDto> {
         const titles: string[] = await this.getTitlesOf(entity.filename)
         const tags: string[] = await this.getTagsOf(entity.filename)
+        const references: string[] = await this.getReferencesOf(entity.filename);
 
         const res: FileDto = {
             fileName: entity.filename,
             userName: entity.username,
             text: entity.text,
             title: titles,
-            tags: tags
+            tags: tags,
+            references: references
         }
         return res;
+    }
+
+    public async getReferencesOf(filename: string): Promise<string[]> {
+        const stmt: DatabaseStatement = {
+            stmt: "g.V().hasLabel(label).has('filename', filename).outE(relname).inV()",
+            params: {
+                label: 'File',
+                filename: filename,
+                relname: 'references'
+            }
+        }
+        return await this.db.runStatement(stmt).then(res => {
+            if (res.length === 0) {
+                return [];
+            }
+            return res._items.map(x => x.properties.filename[0].value as string)
+        })
     }
 
     private static handleInsertFile(fs: FilesService) {
