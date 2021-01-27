@@ -90,7 +90,7 @@ export class FilesService {
 
     public async getReferencedBy(filename: string): Promise<string[]> {
         const stmt: DatabaseStatement = {
-            stmt: "g.V().hasLabel(label).has('filename', filename).inE(relname).inV()",
+            stmt: "g.V().hasLabel(label).has('filename', filename).inE(relname).outV()",
             params: {
                 label: 'File',
                 filename: filename,
