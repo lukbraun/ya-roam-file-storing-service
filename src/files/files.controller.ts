@@ -15,8 +15,8 @@ export class FilesController {
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    async addVertex(@Body() file: CreateFile): Promise<File> {
-        return this.service.create(file).then(this.service.fileToFileDto);
+    async addVertex(@Body() file: CreateFile): Promise<CreateFile> {
+        return this.service.create(file).then(_ => file);
     }
 
     @Get()
